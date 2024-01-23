@@ -38,14 +38,14 @@ local function sleep(timeout, breakCode, onBreak, deadline, signalType, code, _)
 end
 
 local function set(x, y, string, background, foreground)
-    gpu.setBackground(background or 0x002b36)
-    gpu.setForeground(foreground or 0x8cb9c5)
+    gpu.setBackground(background or 0x007B45)
+    gpu.setForeground(foreground or 0xffffff)
     gpu.set(x, y, string)
 end
 
 local function fill(x, y, w, h, background, foreground)
-    gpu.setBackground(background or 0x002b36)
-    gpu.setForeground(foreground or 0x8cb9c5)
+    gpu.setBackground(background or 0x007B45)
+    gpu.setForeground(foreground or 0xffffff)
     gpu.fill(x, y, w, h, " ")
 end
 
@@ -68,8 +68,8 @@ local function rebindGPU()
         gpu.bind((screen.address))
     end
     
-    gpu.setPaletteColor(9, 0x002b36)
-    gpu.setPaletteColor(11, 0x8cb9c5)
+    gpu.setPaletteColor(9, 0x007B45)
+    gpu.setPaletteColor(11, 0xffffff)
 
     local aspectWidth, aspectHeight, proportion = screen.getAspectRatio()
     width, height = gpu.maxResolution()
@@ -89,7 +89,7 @@ local function status(text, title, wait, breakCode, onBreak, y)
     y = math.ceil(height / 2 - #lines / 2)
 
     if title then
-        centrizedSet(y - 1, title, 0x002b36, 0xffffff)
+        centrizedSet(y - 1, title, 0x007B45, 0xffffff)
         y = y + 1
     end
     for i = 1, #lines do
@@ -114,7 +114,7 @@ local function input(prefix, y, centrized, historyText, foreground)
         fill(1, y, width, 1)
         set(x, y, prefix .. text, F, foreground)
         if cursorX <= width then
-            set(cursorX, y, gpu.get(cursorX, y), cursorState and foreground or 0x002b36, cursorState and 0x002b36 or foreground)
+            set(cursorX, y, gpu.get(cursorX, y), cursorState and foreground or 0xffffff, cursorState and 0xffffff or foreground)
         end
 
         signalType, _, char, code = pullSignal(.5)  
@@ -165,8 +165,8 @@ local function execute(code, stdin, env, palette, call)
         if palette and gpu then
             sleep(.3)
             fill(1, 1, width or 0, height or 0, 0)
-            gpu.setPaletteColor(9, 0x969696)
-            gpu.setPaletteColor(11, 0xb4b4b4)
+            gpu.setPaletteColor(9, 0x007B45)
+            gpu.setPaletteColor(11, 0xffffff)
         end
 
         return call(chunk, debug.traceback)
@@ -191,14 +191,14 @@ local function addCandidate(address)
                 centrizedSet(y or height / 2,
                     booting and ("Booting %s from %s (%s)"):format(
                         bootFile,
-                        proxy.getLabel() or "N/A",
+                        proxy.getLabel() or "Local Disk",
                         cutText(address, width > 80 and 36 or 6)
                     ) or bootFile and ("Boot%s %s (%s)"):format(
                         (#allBootFiles == 1 and " " .. bootFile or "") .. " from",
                         proxy.getLabel() or "N/A",
                         cutText(address, 6)
-                    ) or ("Boot from %s (%s) isn't available"):format(
-                        proxy.getLabel() or "N/A",
+                    ) or ("Unable to boot from %s (%s)"):format(
+                        proxy.getLabel() or "Local Disk",
                         cutText(address, 6)
                     )
                 , F, not booting and 0xffffff)
@@ -225,7 +225,7 @@ local function addCandidate(address)
                 success, err = execute(data, "=" .. bootFile, F, 1)
                 success = success and pcall(computer.shutdown)
                 pcall(rebindGPU)
-                pcall(status, err, "¯\\_(ツ)_/¯", math.huge, 0, computer.shutdown)
+                pcall(status, err, "Uh oh!", math.huge, 0, computer.shutdown)
                 error(err)
             end
         end
@@ -270,10 +270,10 @@ local function drawElements(elements, y, spaces, borderHeight, drawSelected, onD
 
     for i = 1, #elements do
         if elements.s == i and drawSelected then
-            fill(x - spaces / 2, y - math.floor(borderHeight / 2), unicode.len(elements[i][1]) + spaces, borderHeight, 0x8cb9c5)
-            set(x, y, elements[i][1], 0x8cb9c5, 0x002b36)
+            fill(x - spaces / 2, y - math.floor(borderHeight / 2), unicode.len(elements[i][1]) + spaces, borderHeight, 0xfffff)
+            set(x, y, elements[i][1], 0xfffff, 0x007B45)
         else
-            set(x, y, elements[i][1], 0x002b36, 0x8cb9c5)
+            set(x, y, elements[i][1], 0x007B45, 0xfffff)
         end
 
         x = x + unicode.len(elements[i][1]) + spaces
@@ -325,25 +325,25 @@ local function shell(env, data, str, text)
 end
 
 local function bootloader()
-    userChecked = 1, not gpu and error"No drives available"
+    userChecked = 1, not gpu and error"No drives are installed."
     ::UPDATE::
     local elementsBootables, correction, elementsPrimary, selectedElements, signalType, code, newLabel, url, y, drive, bootingEntry, update, _ = {s = 1}
 
     elementsPrimary = {
         s = 1,
         p = 1,
-        {"Halt", computer.shutdown},
-        {"Shell", shell},
+        {"Shut Down", computer.shutdown},
+        {"Lua Shell", shell},
         proxy"net" and {"Netboot", function()
             clear()
-            centrizedSet(height / 2 - 1, "Netboot", F, 0xffffff)
+            centrizedSet(height / 2 - 1, "Network Boot", F, 0xffffff)
             url = input("URL: ", height / 2 + 1, 1, F, 0x8cb9c5)
 
             if url and #url > 0 then
                 local handle, data, chunk = proxy"net".request(url, F, F, {["user-agent"]="Netboot"}), ""
 
                 if handle then
-                    status("Downloading script...", "Netboot")
+                    status("Downloading..", "Network Boot")
                     ::LOOP::    
                     chunk = handle.read()
 
@@ -354,9 +354,9 @@ local function bootloader()
 
                     data = select(2, execute(data, "=stdin", F, 1, pcall)) or ""
                     pcall(rebindGPU)
-                    pcall(status, data, "Netboot", #data == 0 and 0 or math.huge)
+                    pcall(status, data, "Network Boot", #data == 0 and 0 or math.huge)
                 else
-                    status("Invalid URL", "Netboot", math.huge)
+                    status("Invalid URL", "Network Boot", math.huge)
                 end
             end
         end}
@@ -370,7 +370,7 @@ local function bootloader()
         updateCandidates()
         for i = 1, #bootCandidates do
             elementsBootables[i] = {
-                cutText(bootCandidates[i].d.getLabel() or "N/A", 6),
+                cutText(bootCandidates[i].d.getLabel() or "Local Disk", 10),
                 function()
                     if #bootCandidates[i].l > 0 then
                         bootingEntry = i
@@ -393,7 +393,7 @@ local function bootloader()
             clear()
 
             if selectedElements.z then
-                centrizedSet(height / 2 - 2, "Select boot entry", F, 0xffffff)
+                centrizedSet(height / 2 - 2, "Choose an Operating System", F, 0xffffff)
                 drawElements(selectedElements, height / 2 + 2, 6, 3, 1)
             else
                 y = height / 2 - (#bootCandidates > 0 and -1 or 1)
@@ -406,8 +406,8 @@ local function bootloader()
             
                         centrizedSet(y + 5, ("Storage %s%% / %s / %s"):format(
                             math.floor(drive.spaceUsed() / (drive.spaceTotal() / 100)),
-                            drive.isReadOnly() and "Read only" or "Read & Write",
-                            drive.spaceTotal() < 2 ^ 20 and "FDD" or drive.spaceTotal() < 2 ^ 20 * 12 and "HDD" or "RAID")
+                            drive.isReadOnly() and "Write Protected" or "Writable",
+                            drive.spaceTotal() < 2 ^ 20 and "Floppy Disk" or drive.spaceTotal() < 2 ^ 20 * 12 and "Hard Disk Drive" or "RAID")
                         )
             
                         for i = correction, #elementsPrimary do
@@ -416,8 +416,8 @@ local function bootloader()
             
                         elementsPrimary[correction] = {"Rename", function()
                             clear()
-                            centrizedSet(height / 2 - 1, "Rename", F, 0xffffff)
-                            newLabel = input("Enter new name: ", height / 2 + 1, 1, F, 0x8cb9c5)
+                            centrizedSet(height / 2 - 1, "Change Drive Label", F, 0xffffff)
+                            newLabel = input("New Label: ", height / 2 + 1, 1, F, 0xffffff)
                 
                             if newLabel and #newLabel > 0 and pcall(drive.setLabel, newLabel) then
                                 drive.setLabel(newLabel)
@@ -433,7 +433,7 @@ local function bootloader()
                             end}
                         end
                     else
-                        centrizedSet(y + 3, "No drives available", F, 0xffffff)
+                        centrizedSet(y + 3, "No drives are installed.", F, 0xffffff)
                     end
                 end)
     
@@ -474,7 +474,7 @@ computer.getBootAddress = function() return proxy"pro" and proxy"pro".getData() 
 computer.setBootAddress = function(d) return proxy"pro" and proxy"pro".setData(d) end
 updateCandidates()
 pcall(rebindGPU)
-pcall(status, "Hold ALT to stay in bootloader", F, 1, 56, bootloader)
+pcall(status, "Lime - Hold ALT to interrupt startup", F, 1, 56, bootloader)
 for i = 1, #bootCandidates do
     bootCandidates[i].b()
 end
