@@ -1,14 +1,37 @@
-**Advanced bootloader for OpenComputers**
-## Installation
+# ![](https://cheddy.neocities.org/lime/limesmall.png)
+## A simple and advanced boot manager for OpenComputers.
 
-For **OpenOS**, just run this command:
+Lime is a fork/continuation of Cyan, a boot manager created by BrightYC for the OpenComputers mod.
+
+**Installation Guide**
+
+Install OpenOS if you don't have it installed already. An *Internet Card* is also required for installation. (If that wasn't obvious already, lol.). Paste the command below.
 
 ```
-wget -f https://raw.githubusercontent.com/BrightYC/Cyan/master/installer.lua /tmp/installer.lua && /tmp/installer.lua
+wget -f https://raw.githubusercontent.com/PerKCheddy/Lime/master/installer.lua /tmp/installer.lua && /tmp/installer.lua
 ```
+The installer will first ask you if you want to create a whitelist. 
 
-For **MineOS**, you need to find app with name `Cyan BIOS`.
-## Shell
+![](https://cheddy.neocities.org/lime/whitelist.png)
+
+A whitelist prevents unauthorized users from booting the computer. Hitting "y" will prompt you to put in a username to add to the whitelist. The whitelist will make it so the computer will boot with input from any user specified in the whitelist
+
+![](https://cheddy.neocities.org/lime/whitelist2.png)
+
+**WARNING!**: You WILL have to create a new EEPROM to re-flash if you type your username incorrectly! If you do not want a whitelist, hit "n" and press enter.
+
+Next, the installer will ask you if you would like to make the EEPROM read only. Making the EEPROM read only will prevent you from re-flashing that EEPROM in the future.
+
+![](https://cheddy.neocities.org/lime/readonly.png)
+
+After letting the installer finish, you'll be prompted to reboot. You can either hit "Y" to reboot, or hit "N" to return to the command shell.
+
+![](https://cheddy.neocities.org/lime/reboot.png)
+
+# Features
+
+**Lua Shell**
+
 Lua REPL with implemented functions:
 
 * os.sleep([timeout: number])
@@ -16,20 +39,10 @@ Lua REPL with implemented functions:
 * read(lastInput: string or nil): string or nil
 * print(...)
 
-## Netboot
-Executes file from specified URL
+**Network Boot**
 
-## Whitelist access
-Prevents booting, for example, if computer stays in some private places.
-To boot, it needs some input from user that defined in whitelist.
+Allows you to easily boot from any Lua file on the Internet. *An Internet Card is required to use this feature.*
 
-## How to build own Cyan BIOS?
-Just run compress.lua (before that minify the code, for example here: https://mothereff.in/lua-minifier) and make sure that minified.lua file stored in the same folder that compress.lua
+**Drive Management**
 
-## Images/Videos
-
-https://www.youtube.com/watch?v=89K8mWFEJKw
-![](https://i.imgur.com/WWiX2tQ.png)
-![](https://i.imgur.com/pnFC0cO.png)
-![](https://i.imgur.com/6QXw6LX.png)
-![](https://i.imgur.com/Yi7v2n2.png)
+Lime allows you to rename, and format your drives right from the boot manager.
