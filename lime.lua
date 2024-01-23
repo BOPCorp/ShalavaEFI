@@ -270,6 +270,10 @@ local function drawElements(elements, y, spaces, borderHeight, drawSelected, onD
 
     for i = 1, #elements do
         if elements.s == i and drawSelected then
+            centrizedSet(height / 5 - 2, "Lime Boot Manager v1.0.0", F, 0xffffff)
+            centrizedSet(height / 2.7 - 1, "Choose a medium to boot off of, or select an advanced option.", F, 0xffffff)
+            centrizedSet(height / 1 - 1, "Press ENTER to chose an option.", F, 0xffffff)
+            centrizedSet(height / 2.5 - 1, "(Use the arrow keys to highlight your choice, then press ENTER.)", F, 0xffffff)
             fill(x - spaces / 2, y - math.floor(borderHeight / 2), unicode.len(elements[i][1]) + spaces, borderHeight, 0xfffff)
             set(x, y, elements[i][1], 0xfffff, 0x007B45)
         else
@@ -332,12 +336,13 @@ local function bootloader()
     elementsPrimary = {
         s = 1,
         p = 1,
+        {"Continue Booting", computer.boot},
         {"Shut Down", computer.shutdown},
         {"Lua Shell", shell},
         proxy"net" and {"Netboot", function()
             clear()
             centrizedSet(height / 2 - 1, "Network Boot", F, 0xffffff)
-            url = input("URL: ", height / 2 + 1, 1, F, 0x8cb9c5)
+            url = input("URL: ", height / 2 + 1, 1, F, 0x007B45)
 
             if url and #url > 0 then
                 local handle, data, chunk = proxy"net".request(url, F, F, {["user-agent"]="Netboot"}), ""
@@ -356,7 +361,7 @@ local function bootloader()
                     pcall(rebindGPU)
                     pcall(status, data, "Network Boot", #data == 0 and 0 or math.huge)
                 else
-                    status("Invalid URL", "Network Boot", math.huge)
+                    status("Unable to fetch the file: Invalid URL", "Network Boot", math.huge)
                 end
             end
         end}
