@@ -48,7 +48,7 @@ if QA("Would you like to create a Whitelist?") then
 end
 
 local readOnly = QA("Would you like to enable EEPROM Flash Protection?")
-os.execute("wget -f https://github.com/PerKCheddy/Lime/blob/master/stuff/cyan.bin?raw=true /tmp/lime.bin")
+os.execute("wget -f https://github.com/PerKCheddy/Lime/blob/master/stuff/cyan.bin?raw=true /tmp/cyan.bin")
 local file = io.open("/tmp/cyan.bin", "r")
 local data = file:read("*a")
 file:close()
