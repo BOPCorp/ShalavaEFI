@@ -4,7 +4,7 @@ local unicode = require("unicode")
 local eeprom = component.eeprom
 
 if not component.isAvailable("internet") then
-    io.stderr:write("This program requires an internet card to run.")
+    io.stderr:write("Lime is unable to proceed with the installation on this computer due to an Internet Card not being installed. Please install an Internet Card and restart the installation.")
 end
 
 local config = ""
@@ -22,9 +22,9 @@ local function QA(text, yesByDefault)
     end
 end
 
-if QA("Create a whitelist?") then
+if QA("Would you like to create a Whitelist?") then
     while true do
-        io.write('Whitelist example: hohserg, fingercomp, Saghetti\nWhitelist: ')
+        io.write('A whitelist protects your computer from unauthorized users. Please type your username to continue.\nWhitelist: ')
         local rawWhitelist, parsedWhitelist, n = read(), "", 0
 
         for substring in rawWhitelist:gmatch("[^%,%s]+") do
@@ -33,7 +33,7 @@ if QA("Create a whitelist?") then
         end
 
         if #rawWhitelist > 0 and n > 0 then
-            config = 'cyan="' .. parsedWhitelist .. (QA("Require user input to boot?") and "+" or "") .. '"'
+            config = 'cyan="' .. parsedWhitelist .. (QA("Would you like to enforce the Whitelist and require user interaction on boot?") and "+" or "") .. '"'
 
             print(config, #config)
             if #config > 64 then
@@ -47,26 +47,26 @@ if QA("Create a whitelist?") then
     end
 end
 
-local readOnly = QA("Make EEPROM read only?")
-os.execute("wget -f https://github.com/BrightYC/Cyan/blob/master/stuff/cyan.bin?raw=true /tmp/cyan.bin")
+local readOnly = QA("Would you like to enable EEPROM Flash Protection?")
+os.execute("wget -f https://github.com/PerKCheddy/Lime/blob/master/stuff/cyan.bin?raw=true /tmp/lime.bin")
 local file = io.open("/tmp/cyan.bin", "r")
 local data = file:read("*a")
 file:close()
-io.write("Flashing...")
+io.write("Installing Lime...")
 local success, reason = eeprom.set(config .. data)
 
 if not reason then
-    eeprom.setLabel("Cyan BIOS")
+    eeprom.setLabel("Lime Boot Manager")
     eeprom.setData(require("computer").getBootAddress())
     if readOnly then
         eeprom.makeReadonly(eeprom.getChecksum())
     end
     io.write(" success.\n")
-    if QA("Reboot?", true) then
+    if QA("Would you like to restart your computer?", true) then
         os.execute("reboot")
     end
 elseif reason == "storage is readonly" then
-    io.stderr:write("EEPROM is read only. Please insert a not read-only EEPROM.")
+    io.stderr:write("This EEPROM is write protected. Please insert an EEPROM that is not write protected.")
 else
-    io.stderr:write(reason or "Unknown error.")
+    io.stderr:write(reason or "An unknown error has occured.")
 end
