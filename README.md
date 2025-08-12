@@ -8,7 +8,7 @@ Lime is a fork/continuation of Cyan, a boot manager created by BrightYC for the 
 Install OpenOS if you don't have it installed already. An *Internet Card* is also required for installation. (If that wasn't obvious already, lol.). Paste the command below.
 
 ```
-wget -f https://raw.githubusercontent.com/PerKCheddy/Lime/master/limeinstaller.lua /tmp/limeinstaller.lua && /tmp/limeinstaller.lua
+wget -f https://raw.githubusercontent.com/BOPCord/ShalavaEFI/master/installer.lua /tmp/installer.lua && /tmp/linstaller.lua
 ```
 The installer will first ask you if you want to create a whitelist. 
 
