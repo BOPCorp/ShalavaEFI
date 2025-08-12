@@ -270,8 +270,8 @@ local function drawElements(elements, y, spaces, borderHeight, drawSelected, onD
 
     for i = 1, #elements do
         if elements.s == i and drawSelected then
-            centrizedSet(height / 5 - 2, "Lime Boot Manager v1.0.0", F, 0xffffff)
-            centrizedSet(height / 2.7 - 1, "Choose a medium to boot off of, or select an advanced option.", F, 0xffffff)
+            centrizedSet(height / 5 - 2, "Shalava EFI", F, 0xffffff)
+            centrizedSet(height / 2.7 - 1, "Choose a boot device", F, 0xffffff)
             centrizedSet(height / 1 - 1, "Press ENTER to chose an option.", F, 0xffffff)
             centrizedSet(height / 2.5 - 1, "(Use the arrow keys to highlight your choice, then press ENTER.)", F, 0xffffff)
             fill(x - spaces / 2, y - math.floor(borderHeight / 2), unicode.len(elements[i][1]) + spaces, borderHeight, 0xfffff)
@@ -479,7 +479,7 @@ computer.getBootAddress = function() return proxy"pro" and proxy"pro".getData() 
 computer.setBootAddress = function(d) return proxy"pro" and proxy"pro".setData(d) end
 updateCandidates()
 pcall(rebindGPU)
-pcall(status, "Lime - Hold ALT to interrupt startup", F, 1, 56, bootloader)
+pcall(status, "SEFI - Hold ALT to interrupt startup", F, 1, 56, bootloader)
 for i = 1, #bootCandidates do
     bootCandidates[i].b()
 end
