@@ -4,7 +4,7 @@ local unicode = require("unicode")
 local eeprom = component.eeprom
 
 if not component.isAvailable("internet") then
-    io.stderr:write("Lime is unable to proceed with the installation on this computer due to an Internet Card not being installed. Please install an Internet Card and restart the installation.")
+    io.stderr:write("ShalavaEFI is unable to proceed with the installation on this computer due to an Internet Card not being installed. Please install an Internet Card and restart the installation.")
 end
 
 local config = ""
@@ -48,11 +48,11 @@ if QA("Would you like to create a Whitelist?") then
 end
 
 local readOnly = QA("Would you like to enable EEPROM Flash Protection?")
-os.execute("wget -f https://github.com/PerKCheddy/Lime/blob/master/stuff/cyan.bin?raw=true /tmp/cyan.bin")
+os.execute("wget -f https://github.com/BOPCorp/ShalavaEFI/blob/master/stuff/cyan.bin?raw=true /tmp/cyan.bin")
 local file = io.open("/tmp/cyan.bin", "r")
 local data = file:read("*a")
 file:close()
-io.write("Installing Lime...")
+io.write("Installing ShalavaEFI...")
 local success, reason = eeprom.set(config .. data)
 
 if not reason then
