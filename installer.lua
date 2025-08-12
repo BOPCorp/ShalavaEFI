@@ -56,7 +56,7 @@ io.write("Installing Lime...")
 local success, reason = eeprom.set(config .. data)
 
 if not reason then
-    eeprom.setLabel("Lime Boot Manager")
+    eeprom.setLabel("Shalava BIOS")
     eeprom.setData(require("computer").getBootAddress())
     if readOnly then
         eeprom.makeReadonly(eeprom.getChecksum())
@@ -68,5 +68,5 @@ if not reason then
 elseif reason == "storage is readonly" then
     io.stderr:write("This EEPROM is write protected. Please insert an EEPROM that is not write protected.")
 else
-    io.stderr:write(reason or "An unknown error has occured.")
+    io.stderr:write(reason or "ошибка какаят хз")
 end
